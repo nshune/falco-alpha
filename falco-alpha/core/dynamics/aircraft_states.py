@@ -18,6 +18,15 @@ def create_aircraft_states(axis, u, v, w, p, q, r):
     x = axis.translation_from_origin.x
     y = axis.translation_from_origin.y
     z = axis.translation_from_origin.z
+
+    state_vector = build_state_vector(u, v, w, p, q, r, phi, theta, psi, x, y, z)
+    angular_rates_vector = build_angular_rates_vector(p, q, r)
+    position_vector = build_position_vector(x, y, z)
+    euler_angles_vector = build_euler_angles_vector(phi, theta, psi)
+    VTAS = calculate_VTAS(u, v, w)
+    alpha = calculate_alpha(u, w)
+    beta = calculate_beta(u, v, w)
+    gamma = calculate_gamma(u, v)
     
     return {
         # Primary state variables
@@ -27,15 +36,16 @@ def create_aircraft_states(axis, u, v, w, p, q, r):
         'x': x, 'y': y, 'z': z,
         
         # Derived state vectors
-        'state_vector': jnp.stack([u, v, w, p, q, r, phi, theta, psi, x, y, z]),
-        'angular_rates_vector': jnp.stack([p, q, r]),
-        'position_vector': jnp.stack([x, y, z]),
-        'euler_angles_vector': jnp.stack([phi, theta, psi]),
+        'state_vector': state_vector,
+        'angular_rates_vector': angular_rates_vector,
+        'position_vector': position_vector,
+        'euler_angles_vector': euler_angles_vector,
         
         # Flight dynamics quantities
-        'VTAS': jnp.linalg.norm(jnp.stack([u, v, w])),
-        'alpha': jnp.arctan2(w, u),
-        'beta': jnp.arctan2(v, jnp.sqrt(u**2 + w**2))
+        'VTAS': VTAS,
+        'alpha': alpha,
+        'beta': beta,
+        'gamma': gamma
     }
 
 @jax.jit
