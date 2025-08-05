@@ -39,7 +39,7 @@ docs = [
 ]
 
 [tool.setuptools.dynamic]
-version = {attr = "falco.__version__"}
+version = {attr = "falco_alpha.__version__"}
 
 [tool.setuptools]
 package-dir = {"" = "."}
